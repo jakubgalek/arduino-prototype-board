@@ -43,7 +43,7 @@ unsigned long roznicaCzasu = 0;
  float Temp_F = 00;
 /********************************************************************/ 
 
- int co_ile_minut_zapis = 15;
+ int co_ile_minut_zapis = 5;
  int ile_dni_do_kasacji = 2;
 
  
@@ -126,8 +126,18 @@ void loop() {
  sensors.requestTemperatures(); // Send the command to get temperature readings 
  //Serial.println("DONE"); 
 
- Temp_A = sensors.getTempCByIndex(0);
- Temp_B = sensors.getTempCByIndex(1);
+ Temp_A = sensors.getTempCByIndex(0)-2;
+ Temp_B = sensors.getTempCByIndex(1)-2;
+ Temp_C = sensors.getTempCByIndex(2)-2;
+
+ if(Temp_A<-50) Temp_A=0;
+ else  {Temp_A = sensors.getTempCByIndex(0)-2;}
+ 
+  if(Temp_B<-50) Temp_B=0;
+ else  {Temp_B = sensors.getTempCByIndex(1)-2;}
+ 
+ if(Temp_C<-50) Temp_C=0;
+ else  {Temp_C = sensors.getTempCByIndex(2)-2;}
 /********************************************************************/
  if(flaga==0){
 lcd.setCursor(0,0); 
@@ -147,7 +157,7 @@ lcd.setCursor(0,0);
   roznicaCzasu = aktualnyCzas - zapamietanyCzas;
   
   //Jeśli różnica wynosi ponad minute
-  if (roznicaCzasu >= co_ile_minut_zapis) 
+  if (roznicaCzasu >= co_ile_minut_zapis*60*1000) 
   {
       zapamietanyCzas = aktualnyCzas;
     
@@ -186,6 +196,7 @@ lcd.setCursor(0,0);
       {
          Serial.println("REMOVE LOGS");
          SD.remove("LOGS.txt");
+         myFile.close();
       } 
       
   } else {
