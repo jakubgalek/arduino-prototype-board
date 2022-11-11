@@ -174,7 +174,7 @@ lcd.setCursor(0,0);
 // lcd.print("F:"); lcd.print(Temp_F, 0);  
 lcd.print(dt.hour);   lcd.print(":");
       lcd.print(dt.minute); lcd.print(":");
-      lcd.print(dt.second); lcd.print("   Li:");
+      lcd.print(dt.second);  lcd.setCursor(10,1);  lcd.print("Li:");
      lcd.print(licznik_zapisow) ;
 }
 
