@@ -35,16 +35,17 @@ unsigned long roznicaCzasu = 0;
  //FLAGA INFORMUJACA WYSWIETLACZ CZY KARTA JEST WLOZONA
  int flaga = 0;
 /********************************************************************/     
- float Temp_A = 00;
- float Temp_B = 00;
- float Temp_C = 00;
- float Temp_D = 00;
- float Temp_E = 00;
- float Temp_F = 00;
+ float Temp_A = 0;
+ float Temp_B = 0;
+ float Temp_C = 0;
+ float Temp_D = 0;
+ float Temp_E = 0;
+ float Temp_F = 0;
 /********************************************************************/ 
 
- int co_ile_minut_zapis = 5;
+ unsigned long co_ile_minut_zapis = 5;
  int ile_dni_do_kasacji = 2;
+ unsigned long co_ile_godzin_reset = 4;
 
  
  int rozmiar_jedna_linijka = 84;
@@ -54,7 +55,13 @@ unsigned long roznicaCzasu = 0;
 
 
 /********************************************************************/
- 
+ void godzina()
+ {
+      Serial.print(dt.hour);   Serial.print(":");
+      Serial.print(dt.minute); Serial.print(":");
+      Serial.print(dt.second); Serial.print("  ");
+ }
+
 void setup() {
 
  // start serial port 
@@ -62,7 +69,9 @@ void setup() {
  Serial.println("Dallas Temperature IC Control Library Demo"); 
 /********************************************************************/
  // Start up the library 
- sensors.begin(); 
+ sensors.begin();
+/********************************************************************/
+
 /********************************************************************/ 
  lcd.init();   
  lcd.backlight(); // zalaczenie podwietlenia 
@@ -74,24 +83,37 @@ void setup() {
     lcd.println("_PRZY STARCIE_");
     while (1);
   }
+    dt = clock.getDateTime();
+   godzina();
   Serial.println("initialization SD done.");
  /********************************************************************/
  // Initialize DS3231
-  Serial.println("Initialize DS3231");;
+  godzina();
+  Serial.print("Initialize DS3231 ");;
   clock.begin();
-
+  Serial.println("done.");;
   // Set sketch compiling time
-    clock.setDateTime(__DATE__, __TIME__);
+   // clock.setDateTime(__DATE__, __TIME__);
 
  /********************************************************************/   
 
- dt = clock.getDateTime();
+
+
+  sensors.requestTemperatures(); // Send the command to get temperature readings 
+ //Serial.println("DONE"); 
+
+ Temp_A = sensors.getTempCByIndex(0)-2;
+ Temp_B = sensors.getTempCByIndex(1)-2;
+ Temp_C = sensors.getTempCByIndex(2)-2;
  
   myFile = SD.open("LOGS.txt", FILE_WRITE);
 
     // if the file opened okay, write to it:
     if (myFile) {
-    Serial.print("Writing to logs.txt...");
+
+       godzina();
+
+    Serial.print("Writing to logs.txt... ");
 
   myFile.print(dt.year);   myFile.print("-");
   myFile.print(dt.month);  myFile.print("-");
@@ -108,10 +130,10 @@ void setup() {
   myFile.print(Temp_F); myFile.println("");
 
       Serial.print("File size: ");
-      Serial.println(myFile.size());
+      Serial.print(myFile.size());
 
       myFile.close();
-      Serial.println("done.");
+      Serial.println(" - done.");
   }
  
 }
@@ -155,9 +177,8 @@ lcd.setCursor(0,0);
   //Pobierz liczbe milisekund od startu
   aktualnyCzas = millis();
   roznicaCzasu = aktualnyCzas - zapamietanyCzas;
-  
   //Jeśli różnica wynosi ponad minute
-  if (roznicaCzasu >= co_ile_minut_zapis*60*1000) 
+  if (roznicaCzasu >= (co_ile_minut_zapis*60*1000)) 
   {
       zapamietanyCzas = aktualnyCzas;
     
