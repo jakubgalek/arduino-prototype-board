@@ -63,6 +63,13 @@ unsigned int licznik_zapisow;
       Serial.print(dt.second); Serial.print("  ");
  }
 
+String toStringWithLeadingZeros(byte number) {
+  String result = String(number);
+  if(number < 10) {
+    result = "0" + result;
+  }
+  return result;
+}
 void setup() {
 
  // start serial port 
@@ -172,9 +179,9 @@ lcd.setCursor(0,0);
  //lcd.print("D:"); lcd.print(Temp_D, 0);  lcd.print("  "); 
  //lcd.print("E:"); lcd.print(Temp_E, 0);  lcd.print("  ");
 // lcd.print("F:"); lcd.print(Temp_F, 0);  
-lcd.print(dt.hour);   lcd.print(":");
-      lcd.print(dt.minute); lcd.print(":");
-      lcd.print(dt.second);  lcd.setCursor(10,1);  lcd.print("Li:");
+lcd.print(toStringWithLeadingZeros(dt.hour));   lcd.print(":");
+      lcd.print(toStringWithLeadingZeros(dt.minute)); lcd.print(":");
+      lcd.print(toStringWithLeadingZeros(dt.second));  lcd.setCursor(10,1);  lcd.print("Li:");
      lcd.print(licznik_zapisow) ;
 }
 
