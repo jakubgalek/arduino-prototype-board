@@ -53,6 +53,7 @@ unsigned long roznicaCzasu = 0;
 
  int rozmiarpoczasie =  rozmiar_jedna_linijka * ile_linii_na_dobe * ile_dni_do_kasacji; 
 
+unsigned int licznik_zapisow;
 
 /********************************************************************/
  void godzina()
@@ -112,6 +113,7 @@ void setup() {
     if (myFile) {
 
        godzina();
+       licznik_zapisow++;
 
     Serial.print("Writing to logs.txt... ");
 
@@ -167,9 +169,15 @@ lcd.setCursor(0,0);
  lcd.print("B:"); lcd.print(Temp_B, 0);  lcd.print("  ");
  lcd.print("C:"); lcd.print(Temp_C, 0);  
  lcd.setCursor(0,1); 
- lcd.print("D:"); lcd.print(Temp_D, 0);  lcd.print("  "); 
- lcd.print("E:"); lcd.print(Temp_E, 0);  lcd.print("  ");
- lcd.print("F:"); lcd.print(Temp_F, 0);  }
+ //lcd.print("D:"); lcd.print(Temp_D, 0);  lcd.print("  "); 
+ //lcd.print("E:"); lcd.print(Temp_E, 0);  lcd.print("  ");
+// lcd.print("F:"); lcd.print(Temp_F, 0);  
+lcd.print(dt.hour);   lcd.print(":");
+      lcd.print(dt.minute); lcd.print(":");
+      lcd.print(dt.second); lcd.print("   Li:");
+     lcd.print(licznik_zapisow) ;
+}
+
 /********************************************************************/
 // Odczytujemy date
   dt = clock.getDateTime();
@@ -182,7 +190,7 @@ lcd.setCursor(0,0);
   {
       zapamietanyCzas = aktualnyCzas;
     
-     
+     licznik_zapisow++;
   // open the file. note that only one file can be open at a time,
   // so you have to close this one before opening another.
   myFile = SD.open("LOGS.txt", FILE_WRITE);
