@@ -110,9 +110,9 @@ void setup() {
   sensors.requestTemperatures(); // Send the command to get temperature readings 
  //Serial.println("DONE"); 
 
- Temp_A = sensors.getTempCByIndex(0);
- Temp_B = sensors.getTempCByIndex(1);
- Temp_C = sensors.getTempCByIndex(2);
+ Temp_A = sensors.getTempCByIndex(0)-1;
+ Temp_B = sensors.getTempCByIndex(1)-1;
+ Temp_C = sensors.getTempCByIndex(2)-1;
  
   myFile = SD.open("LOGS.txt", FILE_WRITE);
 
@@ -157,18 +157,18 @@ void loop() {
  sensors.requestTemperatures(); // Send the command to get temperature readings 
  //Serial.println("DONE"); 
 
- Temp_A = sensors.getTempCByIndex(0);
- Temp_B = sensors.getTempCByIndex(1);
- Temp_C = sensors.getTempCByIndex(2);
+ Temp_A = sensors.getTempCByIndex(0)-1;
+ Temp_B = sensors.getTempCByIndex(1)-1;
+ Temp_C = sensors.getTempCByIndex(2)-1;
 
  if(Temp_A<-50) Temp_A=0;
- else  {Temp_A = sensors.getTempCByIndex(0);}
+ else  {Temp_A = sensors.getTempCByIndex(0)-1;}
  
   if(Temp_B<-50) Temp_B=0;
- else  {Temp_B = sensors.getTempCByIndex(1);}
+ else  {Temp_B = sensors.getTempCByIndex(1)-1;}
  
  if(Temp_C<-50) Temp_C=0;
- else  {Temp_C = sensors.getTempCByIndex(2);}
+ else  {Temp_C = sensors.getTempCByIndex(2)-1;}
 /********************************************************************/
  if(flaga==0){
 lcd.setCursor(0,0); 
