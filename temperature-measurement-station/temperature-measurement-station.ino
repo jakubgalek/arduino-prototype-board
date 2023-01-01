@@ -22,10 +22,15 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 /********************************************************************/ 
 // RTC DS3231
 #include <DS3231.h>
+
 DS3231 clock;
 RTCDateTime dt;
 
 File myFile;
+
+#define DEBOUNCE_DELAY 400  // Opóźnienie debouncingu (w milisekundach)
+
+
 /********************************************************************/ 
  // TIMER DO ROBIENIA ZAPISOW DO PLIKU
 unsigned long aktualnyCzas = 0;
@@ -70,6 +75,17 @@ String toStringWithLeadingZeros(byte number) {
   }
   return result;
 }
+
+
+const int numOptions = 3;
+const char *options[] = {"1.Temperatury", "2.Ustaw date", "3.Reset"};
+int option = 0;
+
+int LEFT_BUTTON = 9;
+int RIGHT_BUTTON = 8;
+int SELECT_BUTTON = 7;
+
+
 void setup() {
 
  // start serial port 
@@ -104,7 +120,9 @@ void setup() {
    // clock.setDateTime(__DATE__, __TIME__);
 
  /********************************************************************/   
-
+  pinMode(9, INPUT_PULLUP);
+  pinMode(8, INPUT_PULLUP);
+  pinMode(7, INPUT_PULLUP);
 
 
   sensors.requestTemperatures(); // Send the command to get temperature readings 
@@ -153,6 +171,59 @@ void loop() {
  // call sensors.requestTemperatures() to issue a global temperature 
  // request to all devices on the bus 
 /********************************************************************/
+
+
+
+ // Wyświetlamy nazwę opcji na pierwszej linii wyświetlacza
+  lcd.setCursor(0, 0);
+  lcd.print(options[option]);
+
+  // Obsługujemy nawigację za pomocą przycisków
+  if (digitalRead(LEFT_BUTTON) == LOW) {
+    // Przesuwamy się do poprzedniej opcji
+      lcd.clear();
+    option = (option + numOptions - 1) % numOptions;
+  }
+  if (digitalRead(RIGHT_BUTTON) == LOW) {
+    // Przesuwamy się do następnej opcji
+      lcd.clear();
+    option = (option + 1) % numOptions;
+  }
+  if (digitalRead(SELECT_BUTTON) == LOW) {
+    // Wybieramy bieżącą opcję
+    lcd.clear();
+    selectOption(option);
+  }
+  // Odświeżamy wyświetlacz
+lcd.setCursor(0, 1);
+lcd.print(" ");
+lcd.setCursor(0, 1);
+lcd.print("^ Wybierz opcje *");
+
+delay(200);
+
+}
+
+void selectOption(int option) {
+// Wykonujemy odpowiednią akcję dla wybranej opcji
+switch (option) {
+case 0:
+LCD_temperatures();
+break;
+case 1:
+setDate();
+break;
+case 2:
+resetFunc(); 
+break;
+}
+}
+
+
+void LCD_temperatures(){
+   
+  lcd.clear();
+  while (digitalRead(LEFT_BUTTON) == HIGH) {
  //Serial.print(" Requesting temperatures..."); 
  sensors.requestTemperatures(); // Send the command to get temperature readings 
  //Serial.println("DONE"); 
@@ -179,9 +250,9 @@ lcd.setCursor(0,0);
  //lcd.print("D:"); lcd.print(Temp_D, 0);  lcd.print("  "); 
  //lcd.print("E:"); lcd.print(Temp_E, 0);  lcd.print("  ");
 // lcd.print("F:"); lcd.print(Temp_F, 0);  
-lcd.print(toStringWithLeadingZeros(dt.hour));   lcd.print(":");
-      lcd.print(toStringWithLeadingZeros(dt.minute)); lcd.print(":");
-      lcd.print(toStringWithLeadingZeros(dt.second));  lcd.setCursor(10,1);  lcd.print("Li:");
+lcd.print(toStringWithLeadingZeros(dt.day));  lcd.print(":");
+lcd.print(toStringWithLeadingZeros(dt.month)); lcd.print(":");
+      lcd.print(dt.year);  lcd.setCursor(11,1);  lcd.print("Li:");
      lcd.print(licznik_zapisow) ;
 }
 
@@ -258,5 +329,125 @@ if(flaga==1)
   resetFunc(); 
 }
  /********************************************************************/
+if (digitalRead(LEFT_BUTTON) == LOW) {
+      // Wróć do menu
+      lcd.clear();
+      break;
+    }
+}
 
 }
+
+
+void setDate() {
+  // Pobieramy aktualną datę z zegara DS3231
+  int day = dt.day;
+  int month = dt.month;
+  int year = dt.year;
+
+  // Ustawiamy tryb edycji dnia
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Dzien -> ");
+  lcd.setCursor(9, 0);
+  lcd.print(toStringWithLeadingZeros(day));
+  int edit = 0;
+  while (edit == 0) {
+    if (digitalRead(LEFT_BUTTON) == LOW) {
+      // Zmniejszamy dzień
+      day--;
+      if (day == 0) day = 31;
+      lcd.setCursor(9, 0);
+      lcd.print(toStringWithLeadingZeros(day));
+      delay(DEBOUNCE_DELAY);
+    }
+    if (digitalRead(RIGHT_BUTTON) == LOW) {
+      // Zwiększamy dzień
+      day++;
+      if (day == 32) day = 1;
+      lcd.setCursor(9, 0);
+      lcd.print(toStringWithLeadingZeros(day));
+      delay(DEBOUNCE_DELAY);
+    }
+    if (digitalRead(SELECT_BUTTON) == LOW) {
+      // Kończymy edycję dnia
+      edit = 1;
+      delay(DEBOUNCE_DELAY);
+    }
+  }
+
+  // Ustawiamy tryb edycji miesiąca
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Miesiac -> ");
+  lcd.setCursor(11, 0);
+  lcd.print(toStringWithLeadingZeros(month));
+  edit = 0;
+  while (edit == 0) {
+    if (digitalRead(LEFT_BUTTON) == LOW) {
+      // Zmniejszamy miesiąc
+      month--;
+      if (month == 0) month = 12;
+      lcd.setCursor(11, 0);
+      lcd.print(toStringWithLeadingZeros(month));
+      delay(DEBOUNCE_DELAY);
+    }
+    if (digitalRead(RIGHT_BUTTON) == LOW) {
+// Zwiększamy miesiąc
+month++;
+if (month == 13) month = 1;
+lcd.setCursor(11, 0);
+lcd.print(toStringWithLeadingZeros(month));
+delay(DEBOUNCE_DELAY);
+}
+if (digitalRead(SELECT_BUTTON) == LOW) {
+// Kończymy edycję miesiąca
+edit = 1;
+delay(DEBOUNCE_DELAY);
+}
+}
+
+// Ustawiamy tryb edycji roku
+year=2023;
+lcd.clear();
+lcd.setCursor(0, 0);
+lcd.print("Rok -> ");
+lcd.setCursor(7, 0);
+lcd.print(year);
+edit = 0;
+while (edit == 0) {
+if (digitalRead(LEFT_BUTTON) == LOW) {
+// Zmniejszamy rok
+year--;
+lcd.setCursor(7, 0);
+lcd.print(year);
+delay(DEBOUNCE_DELAY);
+}
+if (digitalRead(RIGHT_BUTTON) == LOW) {
+// Zwiększamy rok
+year++;
+lcd.setCursor(7, 0);
+lcd.print(year);
+delay(DEBOUNCE_DELAY);
+}
+if (digitalRead(SELECT_BUTTON) == LOW) {
+// Kończymy edycję roku
+edit = 1;
+delay(DEBOUNCE_DELAY);
+}
+}
+
+// Zatwierdzamy datę i zapisujemy ją w zegarze DS3231
+lcd.clear();
+lcd.setCursor(0, 0);
+lcd.print("Ustawiam...");
+lcd.setCursor(0, 1);
+lcd.print(toStringWithLeadingZeros(day));
+lcd.print(".");
+lcd.print(toStringWithLeadingZeros(month));
+lcd.print(".");
+lcd.print(year);
+clock.setDateTime(year, month, day, 19, 21, 00);
+delay(2000);
+}
+      
