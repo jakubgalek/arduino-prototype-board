@@ -28,8 +28,7 @@ RTCDateTime dt;
 
 File myFile;
 
-#define DEBOUNCE_DELAY 400  // Opóźnienie debouncingu (w milisekundach)
-
+#define DEBOUNCE_DELAY 200  // Opóźnienie debouncingu (w milisekundach)
 
 /********************************************************************/ 
  // TIMER DO ROBIENIA ZAPISOW DO PLIKU
@@ -77,8 +76,8 @@ String toStringWithLeadingZeros(byte number) {
 }
 
 
-const int numOptions = 3;
-const char *options[] = {"1.Temperatury", "2.Ustaw date", "3.Reset"};
+const int numOptions = 4;
+const char *options[] = {"1.Temperatury", "2.Ustaw date", "3.Ustaw czas", "4.Reset"};
 int option = 0;
 
 int LEFT_BUTTON = 9;
@@ -87,7 +86,6 @@ int SELECT_BUTTON = 7;
 
 
 void setup() {
-
  // start serial port 
  Serial.begin(9600); 
  Serial.println("Dallas Temperature IC Control Library Demo"); 
@@ -172,7 +170,7 @@ void loop() {
  // request to all devices on the bus 
 /********************************************************************/
 
-
+delay(200);
 
  // Wyświetlamy nazwę opcji na pierwszej linii wyświetlacza
   lcd.setCursor(0, 0);
@@ -194,13 +192,19 @@ void loop() {
     lcd.clear();
     selectOption(option);
   }
-  // Odświeżamy wyświetlacz
+    // Odczytaj aktualną godzinę z zegara DS3231
+  dt = clock.getDateTime();
+  int hour = dt.hour;
+  int minute = dt.minute;
+
+ // Odświeżamy wyświetlacz
 lcd.setCursor(0, 1);
 lcd.print(" ");
 lcd.setCursor(0, 1);
-lcd.print("^ Wybierz opcje *");
-
-delay(200);
+lcd.print("^ Wybierz  ");
+      lcd.print(toStringWithLeadingZeros(dt.hour));   lcd.print(":");
+      lcd.print(toStringWithLeadingZeros(dt.minute)); 
+      
 
 }
 
@@ -214,6 +218,9 @@ case 1:
 setDate();
 break;
 case 2:
+setTime(); 
+break;
+case 3:
 resetFunc(); 
 break;
 }
@@ -250,8 +257,8 @@ lcd.setCursor(0,0);
  //lcd.print("D:"); lcd.print(Temp_D, 0);  lcd.print("  "); 
  //lcd.print("E:"); lcd.print(Temp_E, 0);  lcd.print("  ");
 // lcd.print("F:"); lcd.print(Temp_F, 0);  
-lcd.print(toStringWithLeadingZeros(dt.day));  lcd.print(":");
-lcd.print(toStringWithLeadingZeros(dt.month)); lcd.print(":");
+lcd.print(toStringWithLeadingZeros(dt.day));  lcd.print(".");
+lcd.print(toStringWithLeadingZeros(dt.month)); lcd.print(".");
       lcd.print(dt.year);  lcd.setCursor(11,1);  lcd.print("Li:");
      lcd.print(licznik_zapisow) ;
 }
@@ -340,6 +347,7 @@ if (digitalRead(LEFT_BUTTON) == LOW) {
 
 
 void setDate() {
+  delay(200);
   // Pobieramy aktualną datę z zegara DS3231
   int day = dt.day;
   int month = dt.month;
@@ -447,7 +455,87 @@ lcd.print(".");
 lcd.print(toStringWithLeadingZeros(month));
 lcd.print(".");
 lcd.print(year);
-clock.setDateTime(year, month, day, 19, 21, 00);
+clock.setDateTime(year, month, day,dt.hour,dt.minute,dt.second);
 delay(2000);
 }
-      
+
+void setTime() {
+
+ delay(200);
+
+  int hour = dt.hour;
+  int minute = dt.minute;
+  int second = dt.second;
+
+  // Ustawiamy tryb edycji godziny
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Godzina -> ");
+  lcd.setCursor(11, 0);
+  lcd.print(toStringWithLeadingZeros(hour));
+  int edit = 0;
+  while (edit == 0) {
+    if (digitalRead(LEFT_BUTTON) == LOW) {
+      // Zmniejszamy godzine
+      hour--;
+      if (hour == -1) hour = 23;
+      lcd.setCursor(11, 0);
+      lcd.print(toStringWithLeadingZeros(hour));
+      delay(DEBOUNCE_DELAY);
+    }
+    if (digitalRead(RIGHT_BUTTON) == LOW) {
+      // Zwiększamy godzine
+      hour++;
+      if (hour == 24) hour = 0;
+      lcd.setCursor(11, 0);
+      lcd.print(toStringWithLeadingZeros(hour));
+      delay(DEBOUNCE_DELAY);
+    }
+    if (digitalRead(SELECT_BUTTON) == LOW) {
+      // Kończymy edycję godziny
+      edit = 1;
+      delay(DEBOUNCE_DELAY);
+    }
+  }
+
+  // Ustawiamy tryb edycji miesiąca
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Minuta -> ");
+  lcd.setCursor(11, 0);
+  lcd.print(toStringWithLeadingZeros(minute));
+  edit = 0;
+  while (edit == 0) {
+    if (digitalRead(LEFT_BUTTON) == LOW) {
+      // Zmniejszamy minute
+      minute--;
+      if (minute == -1) minute = 59;
+      lcd.setCursor(11, 0);
+      lcd.print(toStringWithLeadingZeros(minute));
+      delay(DEBOUNCE_DELAY);
+    }
+    if (digitalRead(RIGHT_BUTTON) == LOW) {
+// Zwiększamy minute
+minute++;
+if (minute == 60) minute = 0;
+lcd.setCursor(11, 0);
+lcd.print(toStringWithLeadingZeros(minute));
+delay(DEBOUNCE_DELAY);
+}
+if (digitalRead(SELECT_BUTTON) == LOW) {
+// Kończymy edycję minut
+edit = 1;
+delay(DEBOUNCE_DELAY);
+}
+}
+// Zatwierdzamy datę i zapisujemy ją w zegarze DS3231
+lcd.clear();
+lcd.setCursor(0, 0);
+lcd.print("Ustawiam...");
+lcd.setCursor(0, 1);
+lcd.print(toStringWithLeadingZeros(hour));
+lcd.print(":");
+lcd.print(toStringWithLeadingZeros(minute));
+clock.setDateTime(dt.year, dt.month, dt.day, hour, minute, second);
+delay(2000);
+}
