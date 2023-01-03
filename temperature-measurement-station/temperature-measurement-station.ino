@@ -518,7 +518,7 @@ void setTime() {
 // Zwiększamy minute
 minute++;
 if (minute == 60) minute = 0;
-lcd.setCursor(11, 0);
+lcd.setCursor(10, 0);
 lcd.print(toStringWithLeadingZeros(minute));
 delay(DEBOUNCE_DELAY);
 }
