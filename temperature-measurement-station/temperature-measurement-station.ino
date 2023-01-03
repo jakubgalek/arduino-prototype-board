@@ -502,7 +502,7 @@ void setTime() {
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Minuta -> ");
-  lcd.setCursor(11, 0);
+  lcd.setCursor(10, 0);
   lcd.print(toStringWithLeadingZeros(minute));
   edit = 0;
   while (edit == 0) {
@@ -510,7 +510,7 @@ void setTime() {
       // Zmniejszamy minute
       minute--;
       if (minute == -1) minute = 59;
-      lcd.setCursor(11, 0);
+      lcd.setCursor(10, 0);
       lcd.print(toStringWithLeadingZeros(minute));
       delay(DEBOUNCE_DELAY);
     }
