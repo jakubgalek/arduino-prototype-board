@@ -98,7 +98,7 @@ void setup() {
  lcd.init();   
  lcd.backlight(); // zalaczenie podwietlenia 
 /********************************************************************/ 
- if (!SD.begin(10)) {
+ if (!SD.begin(53)) {
     Serial.println("initialization SD failed!");
     lcd.println("_BRAK KARTY_");
     lcd.setCursor(0,1); 
