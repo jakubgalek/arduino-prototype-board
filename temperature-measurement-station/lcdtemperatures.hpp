@@ -3,7 +3,11 @@
 
 
 void LCD_temperatures() {
-   
+
+   // Zapisanie informacji o tym, że jesteśmy w funkcji do pamięci EEPROM
+  lastWasFunction = true;
+  EEPROM.write(MEMORY_ADDRESS, 1);
+
   lcd.clear();
   while (digitalRead(LEFT_BUTTON) == HIGH) {
  //Serial.print(" Requesting temperatures..."); 
@@ -23,7 +27,7 @@ void LCD_temperatures() {
  if(Temp_C<-50) Temp_C=0;
  else  {Temp_C = sensors.getTempCByIndex(2)-1;}
 /********************************************************************/
- if(flaga==0){
+ if(is_sd_inserted_live==1){
 lcd.setCursor(0,0); 
  lcd.print("A:"); lcd.print(Temp_A, 0);  lcd.print("  ");
  lcd.print("B:"); lcd.print(Temp_B, 0);  lcd.print("  ");
@@ -91,11 +95,11 @@ lcd.print(toStringWithLeadingZeros(dt.month)); lcd.print(".");
   } else {
     // if the file didn't open, print an error:
     Serial.println("error opening logs.txt");
-    flaga=1;  
+    is_sd_inserted_live=0;  
   }
  }
 
-if(flaga==1)
+if(is_sd_inserted_live==0)
 {
     lcd.setCursor(0,0); 
     lcd.println("_WLOZ KARTE_");
@@ -106,7 +110,7 @@ if(flaga==1)
   }
 
  /********************************************************************/
-  if (aktualnyCzas>3600000)
+  if (aktualnyCzas > (co_ile_godzin_reset * 60 * 60 * 1000))
 {
   resetFunc(); 
 }
@@ -114,8 +118,11 @@ if(flaga==1)
 if (digitalRead(LEFT_BUTTON) == LOW) {
       // Wróć do menu
       lcd.clear();
+        lastWasFunction = false;
+        EEPROM.write(MEMORY_ADDRESS, 0);
       break;
     }
 }
+
 
 }

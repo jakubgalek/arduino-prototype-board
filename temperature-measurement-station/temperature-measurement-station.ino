@@ -22,11 +22,15 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 /********************************************************************/ 
 // RTC DS3231
 #include <DS3231.h>
+/********************************************************************/ 
+#include <EEPROM.h>
+/********************************************************************/ 
 
 #include "global_vars.hpp"
 #include "setdate.hpp"
 #include "settime.hpp"
 #include "lcdtemperatures.hpp"
+
 
 
 const int numOptions = 4;
@@ -43,7 +47,8 @@ void setup() {
  // Start up the library 
  sensors.begin();
 /********************************************************************/
-
+ // Odczytanie wartości bitu z pamięci EEPROM
+  lastWasFunction = EEPROM.read(MEMORY_ADDRESS);
 /********************************************************************/ 
  lcd.init();   
  lcd.backlight(); // zalaczenie podwietlenia 
@@ -56,11 +61,11 @@ void setup() {
     while (1);
   }
     dt = clock.getDateTime();
-   godzina();
+   print_time();
   Serial.println("initialization SD done.");
  /********************************************************************/
  // Initialize DS3231
-  godzina();
+  print_time();
   Serial.print("Initialize DS3231 ");;
   clock.begin();
   Serial.println("done.");;
@@ -85,7 +90,7 @@ void setup() {
     // if the file opened okay, write to it:
     if (myFile) {
 
-       godzina();
+       print_time();
        licznik_zapisow++;
 
     Serial.print("Writing to logs.txt... ");
@@ -118,6 +123,10 @@ void loop() {
  // call sensors.requestTemperatures() to issue a global temperature 
  // request to all devices on the bus 
 /********************************************************************/
+ if (lastWasFunction) {
+    // Jeśli ostatnio byliśmy w funkcji, to uruchamiamy ją
+    LCD_temperatures();
+ }
 
 delay(200);
 
@@ -126,21 +135,30 @@ delay(200);
   lcd.print(options[option]);
 
   // Obsługujemy nawigację za pomocą przycisków
-  if (digitalRead(LEFT_BUTTON) == LOW) {
+ if (digitalRead(LEFT_BUTTON) == LOW)
+{
     // Przesuwamy się do poprzedniej opcji
-      lcd.clear();
-    option = (option + numOptions - 1) % numOptions;
-  }
-  if (digitalRead(RIGHT_BUTTON) == LOW) {
+    lcd.clear();
+    option--;
+    if (option < 0) {
+      option = numOptions - 1;
+    }
+}
+if (digitalRead(RIGHT_BUTTON) == LOW)
+{
     // Przesuwamy się do następnej opcji
-      lcd.clear();
-    option = (option + 1) % numOptions;
-  }
-  if (digitalRead(SELECT_BUTTON) == LOW) {
+    lcd.clear();
+    option++;
+    if (option >= numOptions) {
+        option = 0;
+    }
+}
+if (digitalRead(SELECT_BUTTON) == LOW)
+{
     // Wybieramy bieżącą opcję
     lcd.clear();
     selectOption(option);
-  }
+}
     // Odczytaj aktualną godzinę z zegara DS3231
   dt = clock.getDateTime();
   int hour = dt.hour;
@@ -157,22 +175,24 @@ lcd.print("^ Wybierz  ");
 
 }
 
-void selectOption(int option) {
-// Wykonujemy odpowiednią akcję dla wybranej opcji
-switch (option) {
-case 0:
-LCD_temperatures();
-break;
-case 1:
-setDate();
-break;
-case 2:
-setTime(); 
-break;
-case 3:
-resetFunc(); 
-break;
-}
+void selectOption(int option)
+{
+    // Wykonujemy odpowiednią akcję dla wybranej opcji
+    switch (option)
+    {
+    case 0:
+        LCD_temperatures();
+        break;
+    case 1:
+        setDate();
+        break;
+    case 2:
+        setTime();
+        break;
+    case 3:
+        resetFunc();
+        break;
+    }
 }
 
 
