@@ -81,9 +81,9 @@ void setup() {
   sensors.requestTemperatures(); // Send the command to get temperature readings 
  //Serial.println("DONE"); 
 
- Temp_A = sensors.getTempCByIndex(0)-1;
- Temp_B = sensors.getTempCByIndex(1)-1;
- Temp_C = sensors.getTempCByIndex(2)-1;
+ Temp_A = sensors.getTempCByIndex(0);
+ Temp_B = sensors.getTempCByIndex(1);
+ Temp_C = sensors.getTempCByIndex(2);
  
   myFile = SD.open("LOGS.txt", FILE_WRITE);
 

@@ -14,24 +14,24 @@ void LCD_temperatures() {
  sensors.requestTemperatures(); // Send the command to get temperature readings 
  //Serial.println("DONE"); 
 
- Temp_A = sensors.getTempCByIndex(0)-1;
- Temp_B = sensors.getTempCByIndex(1)-1;
- Temp_C = sensors.getTempCByIndex(2)-1;
+ Temp_A = sensors.getTempCByIndex(0);
+ Temp_B = sensors.getTempCByIndex(1);
+ Temp_C = sensors.getTempCByIndex(2);
 
  if(Temp_A<-50) Temp_A=0;
- else  {Temp_A = sensors.getTempCByIndex(0)-1;}
+ else  {Temp_A = sensors.getTempCByIndex(0);}
  
   if(Temp_B<-50) Temp_B=0;
- else  {Temp_B = sensors.getTempCByIndex(1)-1;}
+ else  {Temp_B = sensors.getTempCByIndex(1);}
  
  if(Temp_C<-50) Temp_C=0;
- else  {Temp_C = sensors.getTempCByIndex(2)-1;}
+ else  {Temp_C = sensors.getTempCByIndex(2);}
 /********************************************************************/
  if(is_sd_inserted_live==1){
 lcd.setCursor(0,0); 
- lcd.print("A:"); lcd.print(Temp_A, 0);  lcd.print("  ");
- lcd.print("B:"); lcd.print(Temp_B, 0);  lcd.print("  ");
- lcd.print("C:"); lcd.print(Temp_C, 0);  
+ lcd.print("A:"); lcd.print(Temp_A, 1);  lcd.print("  ");
+ lcd.print("B:"); lcd.print(Temp_B, 1);  lcd.print("  ");
+ lcd.print("C:"); lcd.print(Temp_C, 1);  
  lcd.setCursor(0,1); 
  //lcd.print("D:"); lcd.print(Temp_D, 0);  lcd.print("  "); 
  //lcd.print("E:"); lcd.print(Temp_E, 0);  lcd.print("  ");
