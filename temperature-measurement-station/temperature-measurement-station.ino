@@ -83,7 +83,6 @@ void setup() {
 
  Temp_A = sensors.getTempCByIndex(0);
  Temp_B = sensors.getTempCByIndex(1);
- Temp_C = sensors.getTempCByIndex(2);
  
   myFile = SD.open("LOGS.txt", FILE_WRITE);
 

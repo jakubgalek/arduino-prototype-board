@@ -31,11 +31,8 @@ void LCD_temperatures() {
 lcd.setCursor(0,0); 
  lcd.print("A:"); lcd.print(Temp_A, 1);  lcd.print("  ");
  lcd.print("B:"); lcd.print(Temp_B, 1);  lcd.print("  ");
- lcd.print("C:"); lcd.print(Temp_C, 1);  
  lcd.setCursor(0,1); 
- //lcd.print("D:"); lcd.print(Temp_D, 0);  lcd.print("  "); 
- //lcd.print("E:"); lcd.print(Temp_E, 0);  lcd.print("  ");
-// lcd.print("F:"); lcd.print(Temp_F, 0);  
+ 
 lcd.print(toStringWithLeadingZeros(dt.day));  lcd.print(".");
 lcd.print(toStringWithLeadingZeros(dt.month)); lcd.print(".");
       lcd.print(dt.year);  lcd.setCursor(11,1);  lcd.print("Li:");
