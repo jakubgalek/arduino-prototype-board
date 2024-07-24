@@ -18,13 +18,13 @@ void LCD_temperatures() {
  Temp_C = sensors.getTempCByIndex(2) + tempOffset;
 
  if(Temp_A<-50) Temp_A=0;
- else  {Temp_A = sensors.getTempCByIndex(0);}
+ else  {Temp_A = sensors.getTempCByIndex(0) + tempOffset;}
  
   if(Temp_B<-50) Temp_B=0;
- else  {Temp_B = sensors.getTempCByIndex(1);}
+ else  {Temp_B = sensors.getTempCByIndex(1) + tempOffset;}
  
  if(Temp_C<-50) Temp_C=0;
- else  {Temp_C = sensors.getTempCByIndex(2);}
+ else  {Temp_C = sensors.getTempCByIndex(2) + tempOffset;}
 /********************************************************************/
  if(is_sd_inserted_live==1){
 lcd.setCursor(0,0); 
