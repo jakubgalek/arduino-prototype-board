@@ -40,6 +40,10 @@ float Temp_C = 0;
 float Temp_D = 0;
 float Temp_E = 0;
 float Temp_F = 0;
+
+
+int tempOffset = -0.5;
+
 /********************************************************************/
 
 unsigned long co_ile_minut_zapis = 5;

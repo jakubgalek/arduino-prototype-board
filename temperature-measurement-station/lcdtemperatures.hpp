@@ -1,7 +1,6 @@
 #pragma once
 #include <Arduino.h>
 
-
 void LCD_temperatures() {
 
    // Zapisanie informacji o tym, że jesteśmy w funkcji do pamięci EEPROM
@@ -14,9 +13,9 @@ void LCD_temperatures() {
  sensors.requestTemperatures(); // Send the command to get temperature readings 
  //Serial.println("DONE"); 
 
- Temp_A = sensors.getTempCByIndex(0);
- Temp_B = sensors.getTempCByIndex(1);
- Temp_C = sensors.getTempCByIndex(2);
+ Temp_A = sensors.getTempCByIndex(0) + tempOffset;
+ Temp_B = sensors.getTempCByIndex(1) + tempOffset;
+ Temp_C = sensors.getTempCByIndex(2) + tempOffset;
 
  if(Temp_A<-50) Temp_A=0;
  else  {Temp_A = sensors.getTempCByIndex(0);}
