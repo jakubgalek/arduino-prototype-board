@@ -42,7 +42,7 @@ float Temp_E = 0;
 float Temp_F = 0;
 
 
-float tempOffset = -0.6;
+float tempOffset = -1.6;
 
 /********************************************************************/
 
