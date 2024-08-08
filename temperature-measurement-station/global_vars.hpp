@@ -37,10 +37,6 @@ int is_sd_inserted_live = 1;
 float Temp_A = 0;
 float Temp_B = 0;
 float Temp_C = 0;
-float Temp_D = 0;
-float Temp_E = 0;
-float Temp_F = 0;
-
 
 float tempOffset = -1.6;
 

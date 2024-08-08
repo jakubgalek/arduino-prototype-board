@@ -103,10 +103,7 @@ void setup() {
     
   myFile.print(Temp_A); myFile.print("      ");     
   myFile.print(Temp_B); myFile.print("      ");
-  myFile.print(Temp_C); myFile.print("      ");
-  myFile.print(Temp_D); myFile.print("      ");
-  myFile.print(Temp_E); myFile.print("      ");
-  myFile.print(Temp_F); myFile.println("");
+  myFile.print(Temp_C); myFile.println("");
 
       Serial.print("File size: ");
       Serial.print(myFile.size());
@@ -176,7 +173,6 @@ lcd.print("^ Wybierz  ");
 
 void selectOption(int option)
 {
-    // Wykonujemy odpowiednią akcję dla wybranej opcji
     switch (option)
     {
     case 0:

@@ -69,10 +69,7 @@ lcd.print(toStringWithLeadingZeros(dt.month)); lcd.print(".");
     
   myFile.print(Temp_A); myFile.print("      ");     
   myFile.print(Temp_B); myFile.print("      ");
-  myFile.print(Temp_C); myFile.print("      ");
-  myFile.print(Temp_D); myFile.print("      ");
-  myFile.print(Temp_E); myFile.print("      ");
-  myFile.print(Temp_F); myFile.println("");
+  myFile.print(Temp_C); myFile.println("");
 
         Serial.print("File size: ");
         Serial.println(myFile.size());
